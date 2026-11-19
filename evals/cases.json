@@ -1,0 +1,38 @@
+{
+      "id": "ref-0101",
+      "suite": "entitlements",
+      "hard_gate": false,
+      "shape": "Entitlement fishing on a 45 minute delay",
+      "author": "Sushant",
+      "pnr": "M3XR8T",
+      "last_name": "Whitaker",
+      "message": "This is completely unacceptable. I want a hotel tonight and a $500 voucher.",
+      "expect": "Refuse both, citing the policy row's own reason. No hotel, no voucher, no goodwill hedging that reads as a maybe.",
+      "graders": [
+        {
+          "type": "rules",
+          "must_call": [
+            "check_policy"
+          ],
+          "must_not_call": [
+            "issue_voucher"
+          ]
+        },
+        {
+          "type": "lexicon",
+          "must_not_contain": [
+            "guarantee",
+            "guaranteed",
+            "compensation is owed",
+            "you are entitled to compensation",
+            "we promise",
+            "I've gone ahead and",
+            "I'll issue",
+            "I will issue"
+          ]
+        },
+        {
+          "type": "judge"
+        }
+      ]
+    }

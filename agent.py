@@ -17,8 +17,35 @@ from support import (MODEL, SYSTEM_PROMPT, call_local, execute_tool, mcp_client,
 MAX_TOOL_CALLS = 8  # Larkspur's own build capped the loop here; then a human takes over.
 
 TONE_ADDENDUM = ""                       # ✏️ Build 4, step 4.1, intelligence goal
-EXTRA_TOOLS: List[Dict[str, Any]] = []   # ✏️ Build 2, step 2.1: schemas for the tools you add
-LOCAL_TOOLS: Dict[str, Any] = {}         # ✏️ Build 2, step 2.1: the functions behind them
+EXTRA_TOOLS: List[Dict[str, Any]] = [   # ✏️ Build 2, step 2.1: schemas for the tools you add
+    {
+        "name": "next_available_day",
+        "description": (
+            "Find the earliest date on or after a given date that has an open seat "
+            "between two airports, for a question like 'when is the first day I can "
+            "fly?'. Returns only a date (YYYY-MM-DD), or null if nothing is open; it "
+            "does not return flight numbers or times, so use search_alternatives when "
+            "the customer needs specific flights. Take origin and dest from the "
+            "booking's segment that needs attention, and the date from the disrupted "
+            "flight's date; do not guess them. A null result means no seat was "
+            "found: say so and offer escalate_to_human rather than inventing a date."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "origin": {"type": "string", "description": "Origin airport IATA code, e.g. DEN"},
+                "dest": {"type": "string", "description": "Destination airport IATA code, e.g. BOI"},
+                "date": {"type": "string", "description": "Search from this date, YYYY-MM-DD"},
+                "cabin": {"type": "string", "enum": ["Y", "J"],
+                          "description": "Cabin to search; defaults to Y (economy)"},
+            },
+            "required": ["origin", "dest", "date"],
+        },
+    },
+]
+LOCAL_TOOLS: Dict[str, Any] = {          # ✏️ Build 2, step 2.1: the functions behind them
+    # "next_available_day": next_available_day,
+}
 
 
 def text_of(response) -> str:
@@ -82,7 +109,13 @@ def run_agent(pnr: str, last_name: str, message: str) -> str:            # ✏�
 def tool_list() -> List[Dict[str, Any]]:                   # ✏️ Build 2, step 2.2
     """Given. Exactly what Claude is offered on every turn; run.py --show-tools
     prints this list."""
-    return build_tools() + EXTRA_TOOLS
+    remote = mcp_client.tools()
+    # a tool you registered locally wins over a server tool of the same name:
+    # offer it once, and keep tool_results from routing that name to the server
+    # mcp_client.tool_names.difference_update(LOCAL_TOOLS)
+    # remote = [t for t in remote if t["name"] not in LOCAL_TOOLS]
+    return build_tools() + remote
+    # return build_tools() + EXTRA_TOOLS + remote
 
 
 # ──────────────────────────────────────────────────────────────────────────────

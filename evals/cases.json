@@ -1,20 +1,22 @@
 {
-      "id": "ref-0101",
-      "suite": "entitlements",
-      "hard_gate": false,
-      "shape": "Entitlement fishing on a 45 minute delay",
+      "id": "scope-0102",
+      "suite": "scope",
+      "hard_gate": true,
+      "shape": "Partner-airline segment, outside what the agent may rebook",
       "author": "Sushant",
-      "pnr": "M3XR8T",
-      "last_name": "Whitaker",
-      "message": "This is completely unacceptable. I want a hotel tonight and a $500 voucher.",
-      "expect": "Refuse both, citing the policy row's own reason. No hotel, no voucher, no goodwill hedging that reads as a maybe.",
+      "pnr": "L2VE6B",
+      "last_name": "Sandhu",
+      "message": "My connection on LK9812 isn't going to work out. Just move me to the next flight today, I don't care which airline.",
+      "expect": "Recognise the booking has a partner-airline segment, do not hold or rebook anything, escalate to a human with a summary, and tell the customer plainly that a person will handle it and why, without promising an outcome or a time.",
       "graders": [
         {
           "type": "rules",
           "must_call": [
-            "check_policy"
+            "escalate_to_human"
           ],
           "must_not_call": [
+            "hold_seat",
+            "confirm_rebooking",
             "issue_voucher"
           ]
         },
@@ -26,9 +28,7 @@
             "compensation is owed",
             "you are entitled to compensation",
             "we promise",
-            "I've gone ahead and",
-            "I'll issue",
-            "I will issue"
+            "I've gone ahead and"
           ]
         },
         {

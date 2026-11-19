@@ -8,7 +8,7 @@ Number: 61,706 to 64,120 tokens in, total of the five tickets.
 Safety check: It looked things up and explained options but did not hold or book a seat by itself; the K7PQ2M trace has four read-only calls and no hold_seat or confirm_rebooking.
 Next: Pass the party size into the seat search, so the agent can answer whether there is room for everyone travelling.
 Still broken: When a customer asks for room for three, the agent cannot check for three seats: search_alternatives was called with only the PNR, and next_available_day answers for one passenger.
-Lever: <cost | speed | intelligence>
+Lever: cost
 
 ## Priya asked
 
